@@ -13,14 +13,14 @@
 <body>
     <div class="container">
         <div class="tambah_produk">
-            <input type="text" name="" id="in_nama" placeholder="Nama Produk">
-            <input type="text" name="" id="in_harga" placeholder="Harga (Rp)">
-            <input type="text" name="" id="in_stok" placeholder="Stok">
+            <input type="text" name="" id="in_nama" placeholder="Nama Produk" value="">
+            <input type="text" name="" id="in_harga" placeholder="Harga (Rp)" value="">
+            <input type="text" name="" id="in_stok" placeholder="Stok" value="">
             <br>
-            <textarea name="" id="in_desk" rows="3" placeholder="Deskripsi Produk"></textarea>
+            <textarea name="" id="in_desk" rows="3" placeholder="Deskripsi Produk" value=""></textarea>
             <br>
-            <button type="submit" id="tambah" onclick="addProduct()">Tambah Produk</button>
-            <button type="submit" id="update" onclick="updateProduct()">Update Produk</button>
+            <button type="submit" id="tambah" onclick="saveAndRender()">Tambah Produk</button>
+            <!--<button type="submit" id="update" onclick="saveAndRender()">Update Produk</button>-->
         </div>
         <table class="daftar" cellspacing="0">
             <thead>
@@ -39,24 +39,16 @@
                         Tidak ada produk
                     </td>
                 </tr>
-                <tr>
-                    <!--
-                    <td id="id_addr">1</td>
-                    <td>Produk 1</td>
-                    <td>10.000</td>
-                    <td>Ini produk</td>
-                    <td>10</td>
-                    <td>
-                        <button class="edit" onclick="editProdcut(document.getElementById('id_addr').closest('#id_addr'))">Edit</button>
-                        <button class="hapus" onclick="deleteProduct(document.getElementById('id_addr').closest('#id_addr'))">Hapus</button>
-                    </td>
-                    -->
-                </tr>
             </tbody>
         </table>
     </div>
     <script>
         localStorage.clear(); //JANGAN LUPA HAPUS
+        //localStorage.setItem();
+        var new_id = 0;
+        var old_id = 0;
+        var harga_baru = 0;
+        renderTable();
 
         function separateNumber(num) {
             nfObject = new Intl.NumberFormat('de-DE');
@@ -64,74 +56,110 @@
         };
 
         function generateId() {
+            // kalau ada product yang dihapus --> id ilang, apakah harus generate id itu untuk product baru
             if(localStorage.getItem("lastId") != null) {
                     id = parseInt(localStorage.getItem("lastId")) + 1;
                     localStorage.setItem("lastId", id);
                 }
                 else {
                     id = 1;
-                    localStorage.setItem("lastId", id);
+                    localStorage.setItem("id_terbaru", id);
                 }
                 return id;
         };
 
         function renderTable() {
-            // tr append child
-            
+            document.querySelector("tbody").innerHTML = '';
+            for (let i = 1; i < new_id+1; i++){
+                let product_info = JSON.parse(localStorage.getItem(i));
+                
+                let tr = document.createElement("tr");
+                let id_table = document.createElement("td");
+                let nama = document.createElement("td");
+                let harga = document.createElement("td");
+                let desk = document.createElement("td");
+                let stok = document.createElement("td");
+                let aksi = document.createElement("td");
+                id_table.innerHTML = product_info.id;
+                nama.innerHTML = product_info.name;
+                harga_baru = product_info.price;
+                harga.innerHTML = separateNumber(harga_baru);
+                desk.innerHTML = product_info.description;
+                stok.innerHTML = product_info.stock;
+                aksi.innerHTML = `
+                    <button class="edit" onclick="editProduct(`+new_id+`)">Edit</button>
+                    <button class="hapus" onclick="deleteProduct(`+new_id+`)">Hapus</button>
+                `;
+                tr.appendChild(id_table);
+                tr.appendChild(nama);
+                tr.appendChild(harga);
+                tr.appendChild(desk);
+                tr.appendChild(stok);
+                tr.appendChild(aksi);
+                document.querySelector("tbody").appendChild(tr);
+            }            
         };
 
         function resetForm() {
-            // input jadi kosong
+            document.getElementsByClassName('tambah_produk')[0].innerHTML = "";
+            document.getElementsByClassName('tambah_produk')[0].innerHTML = `
+                <input type="text" name="" id="in_nama" placeholder="Nama Produk" value="">
+                <input type="text" name="" id="in_harga" placeholder="Harga (Rp)" value="">
+                <input type="text" name="" id="in_stok" placeholder="Stok" value="">
+                <br>
+                <textarea name="" id="in_desk" rows="3" placeholder="Deskripsi Produk" value=""></textarea>
+                <br>
+                <button type="submit" id="tambah" onclick="saveAndRender()">Tambah Produk</button>
+            `;
         };
 
         function addProduct(product) {
-            let new_id = generateId();
-            let tr = document.createElement("tr");
-            let id_table = document.createElement("td");
-            let nama = document.createElement("td");
-            let harga = document.createElement("td");
-            let desk = document.createElement("td");
-            let stok = document.createElement("td");
-            let aksi = document.createElement("td");
-            id_table.innerHTML = new_id;
-            nama.innerHTML = $('#in_nama').val();
-            harga_baru = $('#in_harga').val();
-            harga.innerHTML = separateNumber(harga_baru);
-            desk.innerHTML = $('#in_desk').val();
-            stok.innerHTML = $('#in_stok').val();
-            aksi.innerHTML = `
-                <button class="edit" onclick="editProdcut(`+new_id+`)">Edit</button>
-                <button class="hapus" onclick="deleteProduct(`+new_id+`)">Hapus</button>
-            `;
-            tr.appendChild(id_table);
-            tr.appendChild(nama);
-            tr.appendChild(harga);
-            tr.appendChild(desk);
-            tr.appendChild(stok);
-            tr.appendChild(aksi);
-            document.querySelector("tbody").appendChild(tr);
+            new_id = generateId();
+            product.id = new_id;
+            localStorage.setItem(new_id, JSON.stringify(product));
         };
 
         function updateProduct(updatedProduct) {
-            // dari edit?
+            localStorage.setItem(old_id, JSON.stringify(updatedProduct));
         };
 
         function deleteProduct(id) {
+            let product_del = JSON.parse(localStorage.getItem(id));
             console.log(id);
             console.log('del')
             // data local storage ilang, id yang lain geser?
         };
 
-        function editProdcut(id) {
+        function editProduct(id) {
+            let product_edit = JSON.parse(localStorage.getItem(id));
             console.log(id);
-            console.log('edit')
-            // input dimasukin data local storage
+            old_id = id;
+            document.getElementById('tambah').innerHTML = 'Update Produk';
+            document.getElementById('tambah').id = 'update';
+            document.getElementById('in_nama').value = product_edit.name;
+            document.getElementById('in_harga').value = product_edit.price;
+            document.getElementById('in_desk').value = product_edit.description;
+            document.getElementById('in_stok').value = product_edit.stock;
         };
 
         function saveAndRender() {
+            let new_product = {
+                "id": 0, 
+                "name": $('#in_nama').val(),
+                "price": $('#in_harga').val(),
+                "description": $('#in_desk').val(),
+                "stock": $('#in_stok').val()
+            }
+            if(document.getElementsByTagName('button')[0].id == 'tambah'){
+                addProduct(new_product);
+            } else {
+                updateProduct(new_product);
+                console.log('update');
+            }
             // dipanggil function yang CRUD
+            resetForm();
+            renderTable();
         };
-
     </script>
 </body>
 </html>
