@@ -1,0 +1,87 @@
+body, html {
+    margin: 0;
+    padding: 15px;
+    background-color: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.welcome {
+    display: flex;
+    justify-content: space-between;
+    height: 90px;
+}
+
+h2, h3, h4, h5 {
+    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 26px;
+}
+
+h3 {
+    font-size: 23px;
+    margin-top: 20px;
+}
+
+h5 {
+    font-size: 13px;
+}
+
+button {
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+    border: 0;
+    border-radius: 5px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+#penjualan_btn {
+    background-color: #3464f4;
+}
+
+#produk_btn {
+    background-color: gray;
+}
+
+a {
+    text-decoration: none;
+}
+
+#logout {
+    background-color: red;
+}
+
+#tampilan {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 25px;
+}
+
+.kotak {
+    background-color: white;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid rgb(205, 205, 205);
+}
+
+img {
+    object-fit: cover;
+}
+
+.gambar {
+    width: 100%; /* Mengatur lebar gambar agar sesuai dengan kolom */
+    height: 200px; /* Mengatur tinggi gambar */
+    object-fit: cover; /* Memastikan gambar tidak terdistorsi */
+}

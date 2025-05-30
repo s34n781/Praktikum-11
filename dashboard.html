@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./dashboard.css">
+</head>
+<body>
+    <div class="welcome">
+        <div>
+            <h2 id="pesan">Selamat datang, </h2>
+            <button type="button" id="penjualan_btn" onclick="tampilJual()">Tampilkan Info Penjualan</button>
+            <button type="button" id="produk_btn"  onclick="tampilProduk()">Tampilkan Produk Terlaris</button>
+        </div>
+        <div class="container">
+            <button type="button" id="logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <h3></h3>
+    <div id="tampilan"></div>
+    <script>
+        if (localStorage.getItem('nama') == null) {
+            window.location.replace("./Login-2472006.html");
+            close(this);
+            close('./dashboard.html')
+        }
+        document.getElementById('pesan').innerHTML += localStorage.getItem('nama') + '!';
+        async function tampilJual() {
+            document.querySelector('h3').innerHTML = "Info Penjualan";
+            document.getElementById('tampilan').innerHTML = '';
+            await fetch("./login.json")
+            .then((response) => response.json())
+            .then((data) => {
+                for (let i = 0; i < data.penjualan.judul.length; i++) {
+                    let kotak = document.createElement('div');
+                    kotak.className = 'kotak';
+                    kotak.innerHTML = `
+                        <h4>`+data.penjualan.judul[i]+`</h4>
+                        <h2>`+data.penjualan.nilai[i]+`</h2>
+                    `;
+                    document.getElementById('tampilan').appendChild(kotak);
+                };
+            });
+        }
+        async function tampilProduk() {
+            document.querySelector('h3').innerHTML = "Produk Terlaris";
+            document.getElementById('tampilan').innerHTML = '';
+            await fetch("./login.json")
+            .then((response) => response.json())
+            .then((data) => {
+                for (let i = 0; i < data.penjualan.judul.length; i++) {
+                    let kotak = document.createElement('div');
+                    kotak.className = 'kotak';
+                    kotak.innerHTML = `
+                        <img src="`+data.produk.img[i]+`" alt="" class="gambar">
+                        <h4>`+data.produk.judul[i]+`</h4>
+                        <h5>`+data.produk.desc[i]+`</h5>
+                    `;
+                    document.getElementById('tampilan').appendChild(kotak);
+                };
+            });
+        }
+        function logout() {
+            localStorage.removeItem('nama');
+            open("./Login-2472006.html");
+            close('./dashboard.html');
+        }
+    </script>
+</body>
+</html>

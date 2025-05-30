@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./login.css">
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="login_box">
+            <h2>Login</h2>
+            <h4>Email</h4>
+            <input type="email" value="" id="email" placeholder="Masukkan email">
+            <h4>Password</h4>
+            <input type="password" value="" id="passw" placeholder="Masukkan password">
+            <br>
+            <button type="button" onclick="login()">Login</button>
+            <div id="login_error"></div>
+        </div>
+    </div>
+    <script>
+        function login() {
+            if ($('#email').val() == 'test@gmail.com' && $('#passw').val() == 'test123') {
+                localStorage.setItem('nama','testing');
+                open('./dashboard.html');
+                close("./Login-2472006.html");
+            } else {
+                document.getElementById('login_error').innerHTML = 'Email atau password salah.';
+            }
+        }
+    </script>
+</body>
+</html>

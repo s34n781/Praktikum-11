@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./crud.css">
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="tambah_produk">
+            <input type="text" name="" id="in_nama" placeholder="Nama Produk">
+            <input type="text" name="" id="in_harga" placeholder="Harga (Rp)">
+            <input type="text" name="" id="in_stok" placeholder="Stok">
+            <br>
+            <textarea name="" id="in_desk" rows="3" placeholder="Deskripsi Produk"></textarea>
+            <br>
+            <button type="submit" id="tambah" onclick="addProduct()">Tambah Produk</button>
+            <button type="submit" id="update" onclick="updateProduct()">Update Produk</button>
+        </div>
+        <table class="daftar" cellspacing="0">
+            <thead>
+                <tr>
+                    <th id="kiri">ID</th>
+                    <th>Nama Produk</th>
+                    <th>Harga (Rp)</th>
+                    <th>Deskripsi</th>
+                    <th>Stok</th>
+                    <th id="kanan">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="kosong" colspan="6">
+                        Tidak ada produk
+                    </td>
+                </tr>
+                <tr>
+                    <!--
+                    <td id="id_addr">1</td>
+                    <td>Produk 1</td>
+                    <td>10.000</td>
+                    <td>Ini produk</td>
+                    <td>10</td>
+                    <td>
+                        <button class="edit" onclick="editProdcut(document.getElementById('id_addr').closest('#id_addr'))">Edit</button>
+                        <button class="hapus" onclick="deleteProduct(document.getElementById('id_addr').closest('#id_addr'))">Hapus</button>
+                    </td>
+                    -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        localStorage.clear(); //JANGAN LUPA HAPUS
+
+        function separateNumber(num) {
+            nfObject = new Intl.NumberFormat('de-DE');
+            return nfObject.format(num);    
+        };
+
+        function generateId() {
+            if(localStorage.getItem("lastId") != null) {
+                    id = parseInt(localStorage.getItem("lastId")) + 1;
+                    localStorage.setItem("lastId", id);
+                }
+                else {
+                    id = 1;
+                    localStorage.setItem("lastId", id);
+                }
+                return id;
+        };
+
+        function renderTable() {
+            // tr append child
+            
+        };
+
+        function resetForm() {
+            // input jadi kosong
+        };
+
+        function addProduct(product) {
+            let new_id = generateId();
+            let tr = document.createElement("tr");
+            let id_table = document.createElement("td");
+            let nama = document.createElement("td");
+            let harga = document.createElement("td");
+            let desk = document.createElement("td");
+            let stok = document.createElement("td");
+            let aksi = document.createElement("td");
+            id_table.innerHTML = new_id;
+            nama.innerHTML = $('#in_nama').val();
+            harga_baru = $('#in_harga').val();
+            harga.innerHTML = separateNumber(harga_baru);
+            desk.innerHTML = $('#in_desk').val();
+            stok.innerHTML = $('#in_stok').val();
+            aksi.innerHTML = `
+                <button class="edit" onclick="editProdcut(`+new_id+`)">Edit</button>
+                <button class="hapus" onclick="deleteProduct(`+new_id+`)">Hapus</button>
+            `;
+            tr.appendChild(id_table);
+            tr.appendChild(nama);
+            tr.appendChild(harga);
+            tr.appendChild(desk);
+            tr.appendChild(stok);
+            tr.appendChild(aksi);
+            document.querySelector("tbody").appendChild(tr);
+        };
+
+        function updateProduct(updatedProduct) {
+            // dari edit?
+        };
+
+        function deleteProduct(id) {
+            console.log(id);
+            console.log('del')
+            // data local storage ilang, id yang lain geser?
+        };
+
+        function editProdcut(id) {
+            console.log(id);
+            console.log('edit')
+            // input dimasukin data local storage
+        };
+
+        function saveAndRender() {
+            // dipanggil function yang CRUD
+        };
+
+    </script>
+</body>
+</html>
