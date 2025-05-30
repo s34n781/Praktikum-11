@@ -33,21 +33,20 @@
                     <th id="kanan">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td id="kosong" colspan="6">
-                        Tidak ada produk
-                    </td>
-                </tr>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
     <script>
-        localStorage.clear(); //JANGAN LUPA HAPUS
-        //localStorage.setItem();
-        var new_id = 0;
+        //localStorage.clear(); //JANGAN LUPA HAPUS
         var old_id = 0;
         var harga_baru = 0;
+        var deleted = false;
+        if(localStorage.getItem("largest_id") != null) {
+            var largest_id = localStorage.getItem("largest_id");
+        } else {
+            var largest_id = 1;
+            localStorage.setItem("largest_id", largest_id);
+        };
         renderTable();
 
         function separateNumber(num) {
@@ -57,6 +56,12 @@
 
         function generateId() {
             // kalau ada product yang dihapus --> id ilang, apakah harus generate id itu untuk product baru
+            i = 1;
+            while (localStorage.getItem(i) != null) {
+                i+=1;
+            };
+            return i;
+            /*
             if(localStorage.getItem("lastId") != null) {
                     id = parseInt(localStorage.getItem("lastId")) + 1;
                     localStorage.setItem("lastId", id);
@@ -65,39 +70,54 @@
                     id = 1;
                     localStorage.setItem("id_terbaru", id);
                 }
-                return id;
+                return id;*/
         };
 
         function renderTable() {
             document.querySelector("tbody").innerHTML = '';
-            for (let i = 1; i < new_id+1; i++){
-                let product_info = JSON.parse(localStorage.getItem(i));
-                
-                let tr = document.createElement("tr");
-                let id_table = document.createElement("td");
-                let nama = document.createElement("td");
-                let harga = document.createElement("td");
-                let desk = document.createElement("td");
-                let stok = document.createElement("td");
-                let aksi = document.createElement("td");
-                id_table.innerHTML = product_info.id;
-                nama.innerHTML = product_info.name;
-                harga_baru = product_info.price;
-                harga.innerHTML = separateNumber(harga_baru);
-                desk.innerHTML = product_info.description;
-                stok.innerHTML = product_info.stock;
-                aksi.innerHTML = `
-                    <button class="edit" onclick="editProduct(`+new_id+`)">Edit</button>
-                    <button class="hapus" onclick="deleteProduct(`+new_id+`)">Hapus</button>
+            // kalau kosong -> i loncat, kalau i == largest_id -> selesai
+            for (let i = 1; i < largest_id; i++) {
+                if(JSON.parse(localStorage.getItem(i)) != null) {
+                    let product_info = JSON.parse(localStorage.getItem(i));
+                    
+                    let tr = document.createElement("tr");
+                    let id_table = document.createElement("td");
+                    let nama = document.createElement("td");
+                    let harga = document.createElement("td");
+                    let desk = document.createElement("td");
+                    let stok = document.createElement("td");
+                    let aksi = document.createElement("td");
+
+                    id_table.innerHTML = product_info.id;
+                    nama.innerHTML = product_info.name;
+                    harga_baru = product_info.price;
+                    harga.innerHTML = separateNumber(harga_baru);
+                    desk.innerHTML = product_info.description;
+                    stok.innerHTML = product_info.stock;
+                    aksi.innerHTML = `
+                        <button class="edit" onclick="editProduct(`+product_info.id+`)">Edit</button>
+                        <button class="hapus" onclick="deleteProduct(`+product_info.id+`)">Hapus</button>
+                    `;
+
+                    tr.appendChild(id_table);
+                    tr.appendChild(nama);
+                    tr.appendChild(harga);
+                    tr.appendChild(desk);
+                    tr.appendChild(stok);
+                    tr.appendChild(aksi);
+                    document.querySelector("tbody").appendChild(tr);
+                };
+            };
+            if(document.querySelector("tbody").innerHTML == '') {
+                document.querySelector("tbody").innerHTML = `
+                    <tr>
+                        <td id="kosong" colspan="6">
+                            Tidak ada produk
+                        </td>
+                    </tr>
                 `;
-                tr.appendChild(id_table);
-                tr.appendChild(nama);
-                tr.appendChild(harga);
-                tr.appendChild(desk);
-                tr.appendChild(stok);
-                tr.appendChild(aksi);
-                document.querySelector("tbody").appendChild(tr);
-            }            
+                localStorage.setItem("largest_id", 1);
+            };
         };
 
         function resetForm() {
@@ -114,9 +134,12 @@
         };
 
         function addProduct(product) {
-            new_id = generateId();
-            product.id = new_id;
-            localStorage.setItem(new_id, JSON.stringify(product));
+            product.id = generateId();
+            localStorage.setItem(product.id, JSON.stringify(product));
+            if (product.id == largest_id) {
+                largest_id = parseInt(largest_id)+1;
+                localStorage.setItem("largest_id", largest_id);
+            }
         };
 
         function updateProduct(updatedProduct) {
@@ -124,10 +147,10 @@
         };
 
         function deleteProduct(id) {
-            let product_del = JSON.parse(localStorage.getItem(id));
-            console.log(id);
-            console.log('del')
-            // data local storage ilang, id yang lain geser?
+            localStorage.removeItem(id);
+            deleted = true;
+            renderTable();
+            deleted = false;
         };
 
         function editProduct(id) {
@@ -149,14 +172,13 @@
                 "price": $('#in_harga').val(),
                 "description": $('#in_desk').val(),
                 "stock": $('#in_stok').val()
-            }
+            };
             if(document.getElementsByTagName('button')[0].id == 'tambah'){
                 addProduct(new_product);
             } else {
                 updateProduct(new_product);
                 console.log('update');
-            }
-            // dipanggil function yang CRUD
+            };
             resetForm();
             renderTable();
         };
